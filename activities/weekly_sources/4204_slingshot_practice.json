@@ -1,0 +1,186 @@
+{
+  "name": "弹弓练习",
+  "type": 1,
+  "combat": false,
+  "expiredTimestamp": 0,
+  "key": "slingshot_practice_4204",
+  "workflow": {
+    "strategy": "QUERY_BRANCH_LOOP_IMMEDIATE",
+    "cgi": "slingshot_practice",
+    "maxRounds": 8,
+    "bindings": [
+      {
+        "name": "fastScore",
+        "resolver": "PATH",
+        "path": "angel.fast"
+      }
+    ],
+    "query": {
+      "name": "查询状态",
+      "cmd": 0,
+      "branches": [
+        {
+          "name": "奖励已全部领取",
+          "message": "弹弓练习奖励已全部领取",
+          "conditions": [
+            {
+              "path": "angel.received[0]",
+              "operator": "EQ",
+              "value": "1"
+            },
+            {
+              "path": "angel.received[1]",
+              "operator": "EQ",
+              "value": "1"
+            },
+            {
+              "path": "angel.received[2]",
+              "operator": "EQ",
+              "value": "1"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "2000分奖励待手动领取",
+          "message": "射击积分已达到 2000，请手动领取第一档奖励",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "GTE",
+              "value": "2000"
+            },
+            {
+              "path": "angel.received[0]",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "3000分奖励待手动领取",
+          "message": "射击积分已达到 3000，请手动领取第二档奖励",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "GTE",
+              "value": "3000"
+            },
+            {
+              "path": "angel.received[1]",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "1000分奖励待手动领取",
+          "message": "射击积分已达到 1000，请手动领取第三档奖励",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "GTE",
+              "value": "1000"
+            },
+            {
+              "path": "angel.received[2]",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "快速练习",
+          "message": "已解锁弹弓快速练习，自动提交历史最高分",
+          "conditions": [
+            {
+              "path": "angel.time",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.fast",
+              "operator": "NE",
+              "value": "0"
+            }
+          ],
+          "requests": [
+            {
+              "name": "快速练习",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "binding": "fastScore"
+                }
+              ],
+              "failureMessage": "提交弹弓练习快速结果失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "首次练习待手动处理",
+          "message": "弹弓练习尚未产生历史最高分，首次小游戏需手动完成",
+          "conditions": [
+            {
+              "path": "angel.time",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.fast",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "今日练习已完成",
+          "message": "今日弹弓练习次数已用完",
+          "conditions": [
+            {
+              "path": "angel.time",
+              "operator": "GTE",
+              "value": "1"
+            }
+          ],
+          "stopCurrentActivity": true,
+          "terminalResult": "COMPLETED_TODAY"
+        },
+        {
+          "name": "状态待确认",
+          "message": "弹弓练习当前状态暂不明确，请手动处理后再继续",
+          "stopCurrentActivity": true
+        }
+      ]
+    },
+    "completeRules": [
+      {
+        "message": "弹弓练习奖励已全部领取",
+        "conditions": [
+          {
+            "path": "angel.received[0]",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.received[1]",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.received[2]",
+            "operator": "EQ",
+            "value": "1"
+          }
+        ]
+      }
+    ]
+  }
+}

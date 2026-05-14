@@ -1,0 +1,191 @@
+{
+  "name": "灯火重明",
+  "type": 1,
+  "vip": true,
+  "combat": false,
+  "expiredTimestamp": 0,
+  "key": "lanterns_burning_4203",
+  "workflow": {
+    "strategy": "QUERY_BRANCH_LOOP_IMMEDIATE",
+    "cgi": "lanterns_burning",
+    "maxRounds": 8,
+    "query": {
+      "name": "查询状态",
+      "cmd": 0,
+      "branches": [
+        {
+          "name": "奖励已全部兑换",
+          "message": "灯火重明奖励已全部兑换",
+          "conditions": [
+            {
+              "path": "angel.received[0]",
+              "operator": "EQ",
+              "value": "1"
+            },
+            {
+              "path": "angel.received[1]",
+              "operator": "EQ",
+              "value": "1"
+            },
+            {
+              "path": "angel.received[2]",
+              "operator": "EQ",
+              "value": "1"
+            },
+            {
+              "path": "angel.received[3]",
+              "operator": "EQ",
+              "value": "1"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "非VIP用户",
+          "message": "灯火重明仅限 VIP 用户参与，已跳过",
+          "conditions": [
+            {
+              "path": "angel.vip",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "第一只宠物待手动兑换",
+          "message": "石像积分已达到兑换条件，请手动兑换第一只宠物",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "GTE",
+              "value": "6"
+            },
+            {
+              "path": "angel.received[0]",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "第二只宠物待手动兑换",
+          "message": "石像积分已达到兑换条件，请手动兑换第二只宠物",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "GTE",
+              "value": "6"
+            },
+            {
+              "path": "angel.received[1]",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "第三只宠物待手动兑换",
+          "message": "石像积分已达到兑换条件，请手动兑换第三只宠物",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "GTE",
+              "value": "6"
+            },
+            {
+              "path": "angel.received[2]",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "第四只宠物待手动兑换",
+          "message": "石像积分已达到兑换条件，请手动兑换第四只宠物",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "GTE",
+              "value": "6"
+            },
+            {
+              "path": "angel.received[3]",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "今日点灯已完成",
+          "message": "今日点灯次数已用完",
+          "conditions": [
+            {
+              "path": "angel.time",
+              "operator": "GTE",
+              "value": "3"
+            }
+          ],
+          "stopCurrentActivity": true,
+          "terminalResult": "COMPLETED_TODAY"
+        },
+        {
+          "name": "执行一次点灯",
+          "message": "自动提交一次点灯结果",
+          "conditions": [
+            {
+              "path": "angel.time",
+              "operator": "LT",
+              "value": "3"
+            }
+          ],
+          "requests": [
+            {
+              "name": "提交点灯结果",
+              "cmd": 2,
+              "failureMessage": "提交灯火重明点灯结果失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "状态待确认",
+          "message": "灯火重明当前状态暂不明确，请手动处理后再继续",
+          "stopCurrentActivity": true
+        }
+      ]
+    },
+    "completeRules": [
+      {
+        "message": "灯火重明奖励已全部兑换",
+        "conditions": [
+          {
+            "path": "angel.received[0]",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.received[1]",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.received[2]",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.received[3]",
+            "operator": "EQ",
+            "value": "1"
+          }
+        ]
+      }
+    ]
+  }
+}

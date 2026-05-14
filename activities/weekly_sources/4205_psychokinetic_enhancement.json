@@ -1,0 +1,272 @@
+{
+  "name": "念力强化",
+  "type": 1,
+  "combat": true,
+  "expiredTimestamp": 0,
+  "key": "psychokinetic_enhancement_4205",
+  "workflow": {
+    "strategy": "QUERY_BRANCH_LOOP_IMMEDIATE",
+    "cgi": "psychokinetic_enhancement",
+    "maxRounds": 12,
+    "bindings": [
+      {
+        "name": "battleNpcId",
+        "resolver": "MAPPED_PATH",
+        "path": "angel.index",
+        "mapping": {
+          "1": "804134",
+          "2": "803975",
+          "3": "804135"
+        }
+      },
+      {
+        "name": "battleNpcName",
+        "resolver": "MAPPED_PATH",
+        "path": "angel.index",
+        "mapping": {
+          "1": "幽暗蟹",
+          "2": "小游灵",
+          "3": "噬心魔"
+        }
+      }
+    ],
+    "query": {
+      "name": "查询状态",
+      "cmd": 0,
+      "branches": [
+        {
+          "name": "活动已完成",
+          "message": "念力强化奖励已领取",
+          "conditions": [
+            {
+              "path": "angel.received",
+              "operator": "EQ",
+              "value": "1"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "进化待手动处理",
+          "message": "念力强化进度已满，请手动选择精灵领取/进化",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "GTE",
+              "value": "100"
+            },
+            {
+              "path": "angel.received",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "执行一次战斗训练",
+          "message": "开始念力强化战斗训练",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "100"
+            },
+            {
+              "path": "angel.received",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.time[0]",
+              "operator": "LT",
+              "value": "1"
+            },
+            {
+              "binding": "battleNpcId",
+              "operator": "EXISTS",
+              "value": ""
+            }
+          ],
+          "combat": {
+            "npcIdBinding": "battleNpcId",
+            "npcNameBinding": "battleNpcName"
+          },
+          "afterCombatRequests": [
+            {
+              "name": "提交战斗训练结果",
+              "cmd": 2
+            }
+          ],
+          "requeryAfterCombat": true
+        },
+        {
+          "name": "提交一次辅助强化",
+          "message": "材料足够，提交一次念力辅助强化",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "100"
+            },
+            {
+              "path": "angel.received",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.time[1]",
+              "operator": "LT",
+              "value": "3"
+            },
+            {
+              "path": "angel.num[0]",
+              "operator": "GTE",
+              "value": "3"
+            },
+            {
+              "path": "angel.num[1]",
+              "operator": "GTE",
+              "value": "1"
+            },
+            {
+              "path": "angel.num[2]",
+              "operator": "GTE",
+              "value": "3"
+            }
+          ],
+          "requests": [
+            {
+              "name": "提交辅助强化",
+              "cmd": 3,
+              "failureMessage": "提交念力辅助强化失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "材料不足-slot0",
+          "message": "念力强化第 1 个材料不足，请手动获取后再继续",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "100"
+            },
+            {
+              "path": "angel.received",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.time[1]",
+              "operator": "LT",
+              "value": "3"
+            },
+            {
+              "path": "angel.num[0]",
+              "operator": "LT",
+              "value": "3"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "材料不足-slot1",
+          "message": "念力强化第 2 个材料不足，请手动获取后再继续",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "100"
+            },
+            {
+              "path": "angel.received",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.time[1]",
+              "operator": "LT",
+              "value": "3"
+            },
+            {
+              "path": "angel.num[1]",
+              "operator": "LT",
+              "value": "1"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "材料不足-slot2",
+          "message": "念力强化第 3 个材料不足，请手动获取后再继续",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "100"
+            },
+            {
+              "path": "angel.received",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.time[1]",
+              "operator": "LT",
+              "value": "3"
+            },
+            {
+              "path": "angel.num[2]",
+              "operator": "LT",
+              "value": "3"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "今日强化已完成",
+          "message": "今日念力强化可执行次数已用完",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "100"
+            },
+            {
+              "path": "angel.time[0]",
+              "operator": "GTE",
+              "value": "1"
+            },
+            {
+              "path": "angel.time[1]",
+              "operator": "GTE",
+              "value": "3"
+            }
+          ],
+          "stopCurrentActivity": true,
+          "terminalResult": "COMPLETED_TODAY"
+        },
+        {
+          "name": "状态待确认",
+          "message": "念力强化当前状态暂不明确，请手动处理后再继续",
+          "stopCurrentActivity": true
+        }
+      ]
+    },
+    "completeRules": [
+      {
+        "message": "念力强化奖励已领取",
+        "conditions": [
+          {
+            "path": "angel.received",
+            "operator": "EQ",
+            "value": "1"
+          }
+        ]
+      }
+    ]
+  }
+}
