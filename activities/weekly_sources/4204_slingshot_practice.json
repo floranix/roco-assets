@@ -124,8 +124,8 @@
           "requeryAfterRequests": true
         },
         {
-          "name": "首次练习待手动处理",
-          "message": "弹弓练习尚未产生历史最高分，首次小游戏需手动完成",
+          "name": "首次练习",
+          "message": "弹弓练习尚未产生历史最高分，自动提交首次练习 1000 分",
           "conditions": [
             {
               "path": "angel.time",
@@ -138,7 +138,21 @@
               "value": "0"
             }
           ],
-          "stopCurrentActivity": true
+          "requests": [
+            {
+              "name": "提交首次练习结果",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "value": "1000"
+                }
+              ],
+              "failureMessage": "提交弹弓练习首次结果失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
         },
         {
           "name": "今日练习已完成",
