@@ -1,0 +1,220 @@
+{
+  "name": "小堡移动工坊",
+  "type": 1,
+  "combat": false,
+  "expiredTimestamp": 0,
+  "key": "mobile_workshop_4195",
+  "workflow": {
+    "strategy": "QUERY_BRANCH_LOOP_IMMEDIATE",
+    "cgi": "mobile_workshop",
+    "maxRounds": 6,
+    "query": {
+      "name": "查询状态",
+      "cmd": 0,
+      "branches": [
+        {
+          "name": "活动已完成",
+          "message": "小堡移动工坊奖励已领取",
+          "conditions": [
+            {
+              "path": "angel.received",
+              "operator": "EQ",
+              "value": "1"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "最终奖励待手动领取",
+          "message": "小堡移动工坊进度已满，请手动领取最终奖励",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "GTE",
+              "value": "9"
+            },
+            {
+              "path": "angel.received",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "今日任务已全部完成",
+          "message": "今日小堡移动工坊可处理任务已全部完成",
+          "conditions": [
+            {
+              "path": "angel.time[0]",
+              "operator": "GTE",
+              "value": "1"
+            },
+            {
+              "path": "angel.time[1]",
+              "operator": "GTE",
+              "value": "1"
+            },
+            {
+              "path": "angel.time[2]",
+              "operator": "GTE",
+              "value": "1"
+            }
+          ],
+          "stopCurrentActivity": true,
+          "terminalResult": "COMPLETED_TODAY"
+        },
+        {
+          "name": "提交第2项材料任务",
+          "message": "检测到第 2 项材料充足，自动提交一次维护进度",
+          "conditions": [
+            {
+              "path": "angel.time[1]",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.num[0]",
+              "operator": "GTE",
+              "value": "10"
+            },
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "9"
+            }
+          ],
+          "requests": [
+            {
+              "name": "提交第2项材料任务",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "value": "2"
+                }
+              ],
+              "failureMessage": "提交小堡移动工坊第 2 项材料任务失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "提交第3项材料任务",
+          "message": "检测到第 3 项材料充足，自动提交一次维护进度",
+          "conditions": [
+            {
+              "path": "angel.time[2]",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.num[1]",
+              "operator": "GTE",
+              "value": "10"
+            },
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "9"
+            }
+          ],
+          "requests": [
+            {
+              "name": "提交第3项材料任务",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "value": "3"
+                }
+              ],
+              "failureMessage": "提交小堡移动工坊第 3 项材料任务失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "第1项任务待手动处理",
+          "message": "小堡移动工坊第 1 项任务疑似小游戏或战斗，当前缺少可靠自动参数，请手动完成后再继续",
+          "conditions": [
+            {
+              "path": "angel.time[0]",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "9"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "第2项材料不足",
+          "message": "小堡移动工坊第 2 项材料不足，请手动获取后再继续",
+          "conditions": [
+            {
+              "path": "angel.time[1]",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.num[0]",
+              "operator": "LT",
+              "value": "10"
+            },
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "9"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "第3项材料不足",
+          "message": "小堡移动工坊第 3 项材料不足，请手动获取后再继续",
+          "conditions": [
+            {
+              "path": "angel.time[2]",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.num[1]",
+              "operator": "LT",
+              "value": "10"
+            },
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "9"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "状态待确认",
+          "message": "小堡移动工坊当前状态暂不明确，请手动处理后再继续",
+          "stopCurrentActivity": true
+        }
+      ]
+    },
+    "completeRules": [
+      {
+        "message": "小堡移动工坊奖励已领取",
+        "conditions": [
+          {
+            "path": "angel.received",
+            "operator": "EQ",
+            "value": "1"
+          }
+        ]
+      }
+    ]
+  }
+}

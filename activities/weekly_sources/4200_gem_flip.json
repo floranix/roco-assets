@@ -1,0 +1,213 @@
+{
+  "name": "宝石翻翻看",
+  "type": 1,
+  "combat": false,
+  "expiredTimestamp": 0,
+  "key": "gem_flip_4200",
+  "workflow": {
+    "strategy": "QUERY_BRANCH_LOOP_IMMEDIATE",
+    "cgi": "gem_flip",
+    "maxRounds": 16,
+    "bindings": [
+      {
+        "name": "firstGemIndex",
+        "resolver": "FIRST_INDEX_NOT_EQUAL",
+        "path": "angel.block",
+        "compareValue": "0",
+        "indexBase": 1
+      },
+      {
+        "name": "firstGemValue",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.block",
+        "sourceBinding": "firstGemIndex",
+        "indexBase": 1
+      },
+      {
+        "name": "secondGemIndex",
+        "resolver": "FIRST_INDEX_MATCHING_BINDING",
+        "path": "angel.block",
+        "sourceBinding": "firstGemIndex",
+        "compareBinding": "firstGemValue",
+        "compareValue": "0",
+        "indexBase": 1
+      }
+    ],
+    "query": {
+      "name": "查询状态",
+      "cmd": 0,
+      "branches": [
+        {
+          "name": "奖励已领取",
+          "message": "宝石翻翻看奖励已领取",
+          "conditions": [
+            {
+              "path": "angel.received",
+              "operator": "EQ",
+              "value": "1"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "最终奖励待手动领取",
+          "message": "宝石翻翻看已达满进度，请手动领取最终奖励",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "GTE",
+              "value": "3"
+            },
+            {
+              "path": "angel.received",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "今日已完成",
+          "message": "今日宝石翻翻看已完成",
+          "conditions": [
+            {
+              "path": "angel.time",
+              "operator": "GTE",
+              "value": "1"
+            },
+            {
+              "path": "angel.start",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true,
+          "terminalResult": "COMPLETED_TODAY"
+        },
+        {
+          "name": "开始新一轮翻牌",
+          "message": "自动开始一轮宝石翻翻看",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "3"
+            },
+            {
+              "path": "angel.time",
+              "operator": "LT",
+              "value": "1"
+            },
+            {
+              "path": "angel.start",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "requests": [
+            {
+              "name": "开始翻牌",
+              "cmd": 2,
+              "failureMessage": "开始宝石翻翻看失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "自动匹配一对宝石",
+          "message": "检测到可配对宝石，自动完成一组匹配",
+          "conditions": [
+            {
+              "path": "angel.start",
+              "operator": "EQ",
+              "value": "1"
+            },
+            {
+              "path": "angel.match",
+              "operator": "LT",
+              "value": "10"
+            },
+            {
+              "binding": "firstGemIndex",
+              "operator": "EXISTS",
+              "value": ""
+            },
+            {
+              "binding": "secondGemIndex",
+              "operator": "EXISTS",
+              "value": ""
+            }
+          ],
+          "requests": [
+            {
+              "name": "选择第一颗宝石",
+              "cmd": 3,
+              "params": [
+                {
+                  "key": "index",
+                  "binding": "firstGemIndex"
+                }
+              ],
+              "failureMessage": "选择第一颗宝石失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            },
+            {
+              "name": "刷新棋盘状态",
+              "cmd": 0,
+              "failureMessage": "刷新宝石棋盘失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            },
+            {
+              "name": "选择第二颗宝石",
+              "cmd": 3,
+              "params": [
+                {
+                  "key": "index",
+                  "binding": "secondGemIndex"
+                }
+              ],
+              "failureMessage": "选择第二颗宝石失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "棋盘信息不足",
+          "message": "宝石翻翻看当前棋盘未返回足够的配对信息，请手动处理后再继续",
+          "conditions": [
+            {
+              "path": "angel.start",
+              "operator": "EQ",
+              "value": "1"
+            },
+            {
+              "path": "angel.match",
+              "operator": "LT",
+              "value": "10"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "状态待确认",
+          "message": "宝石翻翻看当前状态暂不明确，请手动确认后再继续",
+          "stopCurrentActivity": true
+        }
+      ]
+    },
+    "completeRules": [
+      {
+        "message": "宝石翻翻看奖励已领取",
+        "conditions": [
+          {
+            "path": "angel.received",
+            "operator": "EQ",
+            "value": "1"
+          }
+        ]
+      }
+    ]
+  }
+}
