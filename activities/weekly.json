@@ -3,10 +3,22 @@
   "message": "ok",
   "timestamp": 0,
   "data": {
-    "total": 3,
+    "total": 5,
     "page": 1,
     "num": 100,
     "list": [
+      {
+        "id": 4195,
+        "name": "小堡移动工坊",
+        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4195_mobile_workshop.json",
+        "expired": false
+      },
+      {
+        "id": 4200,
+        "name": "宝石翻翻看",
+        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4200_gem_flip.json",
+        "expired": false
+      },
       {
         "id": 4203,
         "name": "灯火重明",
