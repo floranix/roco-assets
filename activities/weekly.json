@@ -3,7 +3,7 @@
   "message": "ok",
   "timestamp": 0,
   "data": {
-    "total": 5,
+    "total": 9,
     "page": 1,
     "num": 100,
     "list": [
@@ -35,6 +35,30 @@
         "id": 4205,
         "name": "念力强化",
         "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4205_psychokinetic_enhancement.json",
+        "expired": false
+      },
+      {
+        "id": 4213,
+        "name": "飞龙在天",
+        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4213_flying_dragon.json",
+        "expired": false
+      },
+      {
+        "id": 4215,
+        "name": "蓄意轰拳",
+        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4215_deliberate_punch.json",
+        "expired": false
+      },
+      {
+        "id": 4216,
+        "name": "寻找时光胶囊",
+        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4216_find_time_capsule.json",
+        "expired": false
+      },
+      {
+        "id": 4217,
+        "name": "快睡吧您",
+        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4217_sweet_dream.json",
         "expired": false
       }
     ]
