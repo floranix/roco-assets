@@ -1,0 +1,441 @@
+{
+  "name": "快睡吧您",
+  "type": 1,
+  "combat": true,
+  "expiredTimestamp": 0,
+  "key": "sweet_dream_4217",
+  "workflow": {
+    "strategy": "QUERY_BRANCH_LOOP_IMMEDIATE",
+    "cgi": "sweet_dream",
+    "maxRounds": 12,
+    "runtimeBindings": [
+      {
+        "name": "liverItemCount",
+        "resolver": "PROP_COUNT",
+        "itemId": 67373687,
+        "itemType": 1,
+        "itemSubtype": 1
+      },
+      {
+        "name": "lullabyItem1Count",
+        "resolver": "PROP_COUNT",
+        "itemId": 17367045,
+        "itemType": 1,
+        "itemSubtype": 1
+      },
+      {
+        "name": "lullabyItem2Count",
+        "resolver": "PROP_COUNT",
+        "itemId": 67371909,
+        "itemType": 1,
+        "itemSubtype": 1
+      },
+      {
+        "name": "lullabyItem3Count",
+        "resolver": "PROP_COUNT",
+        "itemId": 67239984,
+        "itemType": 1,
+        "itemSubtype": 1
+      }
+    ],
+    "bindings": [
+      {
+        "name": "fightIndex",
+        "resolver": "FIRST_INDEX_EQUAL",
+        "path": "angel.info.event",
+        "compareValue": "3",
+        "indexBase": 1
+      },
+      {
+        "name": "fightPendingIndex",
+        "resolver": "FIRST_MAPPED_INDEX_MATCHING_BINDING",
+        "path": "angel.info.finish",
+        "compareBinding": "fightIndex",
+        "compareValue": "1",
+        "mapping": {
+          "1": "1",
+          "2": "2",
+          "3": "3"
+        }
+      },
+      {
+        "name": "liverIndex",
+        "resolver": "FIRST_INDEX_EQUAL",
+        "path": "angel.info.event",
+        "compareValue": "1",
+        "indexBase": 1
+      },
+      {
+        "name": "liverPendingIndex",
+        "resolver": "FIRST_MAPPED_INDEX_MATCHING_BINDING",
+        "path": "angel.info.finish",
+        "compareBinding": "liverIndex",
+        "compareValue": "1",
+        "mapping": {
+          "1": "1",
+          "2": "2",
+          "3": "3"
+        }
+      },
+      {
+        "name": "lullabyIndex",
+        "resolver": "FIRST_INDEX_EQUAL",
+        "path": "angel.info.event",
+        "compareValue": "2",
+        "indexBase": 1
+      },
+      {
+        "name": "lullabyPendingIndex",
+        "resolver": "FIRST_MAPPED_INDEX_MATCHING_BINDING",
+        "path": "angel.info.finish",
+        "compareBinding": "lullabyIndex",
+        "compareValue": "1",
+        "mapping": {
+          "1": "1",
+          "2": "2",
+          "3": "3"
+        }
+      }
+    ],
+    "query": {
+      "name": "查询状态",
+      "cmd": 0,
+      "branches": [
+        {
+          "name": "活动已完成",
+          "message": "快睡吧您奖励已领取",
+          "conditions": [
+            {
+              "path": "angel.received",
+              "operator": "EQ",
+              "value": "1"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "最终奖励待手动领取",
+          "message": "快睡吧您已达满进度，请手动领取最终奖励",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "GTE",
+              "value": "9"
+            },
+            {
+              "path": "angel.received",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "挑战睡神",
+          "message": "发现可处理的战斗事件，开始挑战睡神",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "9"
+            },
+            {
+              "binding": "fightPendingIndex",
+              "operator": "EXISTS",
+              "value": ""
+            }
+          ],
+          "combat": {
+            "npcId": 804350,
+            "npcName": "睡神"
+          },
+          "afterCombatRequests": [
+            {
+              "name": "提交战斗帮助结果",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "binding": "fightPendingIndex"
+                }
+              ],
+              "failureMessage": "提交战斗帮助结果失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterCombat": true
+        },
+        {
+          "name": "提交护肝膏帮助",
+          "message": "发现金牌护肝膏事件且背包数量足够，自动提交帮助",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "9"
+            },
+            {
+              "binding": "liverPendingIndex",
+              "operator": "EXISTS",
+              "value": ""
+            },
+            {
+              "binding": "liverItemCount",
+              "operator": "GTE",
+              "value": "1"
+            }
+          ],
+          "requests": [
+            {
+              "name": "提交护肝膏帮助",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "binding": "liverPendingIndex"
+                }
+              ],
+              "failureMessage": "提交护肝膏帮助失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "护肝膏不足",
+          "message": "快睡吧您需要金牌护肝膏*1，但当前背包数量不足，跳过当前活动",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "9"
+            },
+            {
+              "binding": "liverPendingIndex",
+              "operator": "EXISTS",
+              "value": ""
+            },
+            {
+              "binding": "liverItemCount",
+              "operator": "LT",
+              "value": "1"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "提交摇篮曲帮助-道具1",
+          "message": "发现摇篮曲事件，优先使用道具1自动帮助",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "9"
+            },
+            {
+              "binding": "lullabyPendingIndex",
+              "operator": "EXISTS",
+              "value": ""
+            },
+            {
+              "binding": "lullabyItem1Count",
+              "operator": "GTE",
+              "value": "10"
+            }
+          ],
+          "requests": [
+            {
+              "name": "提交摇篮曲帮助-道具1",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "binding": "lullabyPendingIndex"
+                },
+                {
+                  "key": "i1",
+                  "value": "1"
+                }
+              ],
+              "failureMessage": "提交摇篮曲帮助失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "提交摇篮曲帮助-道具2",
+          "message": "发现摇篮曲事件，使用道具2自动帮助",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "9"
+            },
+            {
+              "binding": "lullabyPendingIndex",
+              "operator": "EXISTS",
+              "value": ""
+            },
+            {
+              "binding": "lullabyItem1Count",
+              "operator": "LT",
+              "value": "10"
+            },
+            {
+              "binding": "lullabyItem2Count",
+              "operator": "GTE",
+              "value": "10"
+            }
+          ],
+          "requests": [
+            {
+              "name": "提交摇篮曲帮助-道具2",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "binding": "lullabyPendingIndex"
+                },
+                {
+                  "key": "i1",
+                  "value": "2"
+                }
+              ],
+              "failureMessage": "提交摇篮曲帮助失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "提交摇篮曲帮助-道具3",
+          "message": "发现摇篮曲事件，使用道具3自动帮助",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "9"
+            },
+            {
+              "binding": "lullabyPendingIndex",
+              "operator": "EXISTS",
+              "value": ""
+            },
+            {
+              "binding": "lullabyItem1Count",
+              "operator": "LT",
+              "value": "10"
+            },
+            {
+              "binding": "lullabyItem2Count",
+              "operator": "LT",
+              "value": "10"
+            },
+            {
+              "binding": "lullabyItem3Count",
+              "operator": "GTE",
+              "value": "500"
+            }
+          ],
+          "requests": [
+            {
+              "name": "提交摇篮曲帮助-道具3",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "binding": "lullabyPendingIndex"
+                },
+                {
+                  "key": "i1",
+                  "value": "3"
+                }
+              ],
+              "failureMessage": "提交摇篮曲帮助失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "摇篮曲道具不足",
+          "message": "快睡吧您需要摇篮曲材料，但当前背包数量不足，跳过当前活动",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "9"
+            },
+            {
+              "binding": "lullabyPendingIndex",
+              "operator": "EXISTS",
+              "value": ""
+            },
+            {
+              "binding": "lullabyItem1Count",
+              "operator": "LT",
+              "value": "10"
+            },
+            {
+              "binding": "lullabyItem2Count",
+              "operator": "LT",
+              "value": "10"
+            },
+            {
+              "binding": "lullabyItem3Count",
+              "operator": "LT",
+              "value": "500"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "今日已完成",
+          "message": "今日快睡吧您已完成",
+          "conditions": [
+            {
+              "path": "angel.info[0].finish",
+              "operator": "EQ",
+              "value": "1"
+            },
+            {
+              "path": "angel.info[1].finish",
+              "operator": "EQ",
+              "value": "1"
+            },
+            {
+              "path": "angel.info[2].finish",
+              "operator": "EQ",
+              "value": "1"
+            },
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "9"
+            }
+          ],
+          "stopCurrentActivity": true,
+          "terminalResult": "COMPLETED_TODAY"
+        },
+        {
+          "name": "没有可处理事件",
+          "message": "快睡吧您当前没有可自动处理的事件，请手动确认活动状态",
+          "stopCurrentActivity": true
+        }
+      ]
+    },
+    "completeRules": [
+      {
+        "message": "快睡吧您奖励已领取",
+        "conditions": [
+          {
+            "path": "angel.received",
+            "operator": "EQ",
+            "value": "1"
+          }
+        ]
+      }
+    ]
+  }
+}

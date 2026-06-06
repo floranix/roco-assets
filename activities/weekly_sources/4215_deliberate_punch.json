@@ -1,0 +1,200 @@
+{
+  "name": "蓄意轰拳",
+  "type": 1,
+  "combat": false,
+  "expiredTimestamp": 0,
+  "key": "deliberate_punch_4215",
+  "workflow": {
+    "strategy": "QUERY_BRANCH_LOOP_IMMEDIATE",
+    "cgi": "deliberate_punch",
+    "maxRounds": 8,
+    "bindings": [
+      {
+        "name": "fastScore",
+        "resolver": "PATH",
+        "path": "angel.fast"
+      }
+    ],
+    "query": {
+      "name": "查询状态",
+      "cmd": 0,
+      "branches": [
+        {
+          "name": "奖励已全部领取",
+          "message": "蓄意轰拳奖励已全部领取",
+          "conditions": [
+            {
+              "path": "angel.received[0]",
+              "operator": "EQ",
+              "value": "1"
+            },
+            {
+              "path": "angel.received[1]",
+              "operator": "EQ",
+              "value": "1"
+            },
+            {
+              "path": "angel.received[2]",
+              "operator": "EQ",
+              "value": "1"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "20分奖励待手动领取",
+          "message": "蓄力积分已达到 20，请手动领取第一档奖励",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "GTE",
+              "value": "20"
+            },
+            {
+              "path": "angel.received[0]",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "40分奖励待手动领取",
+          "message": "蓄力积分已达到 40，请手动领取第二档奖励",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "GTE",
+              "value": "40"
+            },
+            {
+              "path": "angel.received[1]",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "10分奖励待手动领取",
+          "message": "蓄力积分已达到 10，请手动领取第三档奖励",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "GTE",
+              "value": "10"
+            },
+            {
+              "path": "angel.received[2]",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "快速练习",
+          "message": "已解锁蓄意轰拳快速练习，自动提交历史最高分",
+          "conditions": [
+            {
+              "path": "angel.time",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.fast",
+              "operator": "NE",
+              "value": "0"
+            }
+          ],
+          "requests": [
+            {
+              "name": "快速练习",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "binding": "fastScore"
+                }
+              ],
+              "failureMessage": "提交蓄意轰拳快速结果失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "首次练习",
+          "message": "蓄意轰拳尚未产生历史最高分，自动提交首次练习 10 分",
+          "conditions": [
+            {
+              "path": "angel.time",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.fast",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "requests": [
+            {
+              "name": "提交首次练习结果",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "value": "10"
+                }
+              ],
+              "failureMessage": "提交蓄意轰拳首次结果失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "今日练习已完成",
+          "message": "今日蓄意轰拳次数已用完",
+          "conditions": [
+            {
+              "path": "angel.time",
+              "operator": "GTE",
+              "value": "1"
+            }
+          ],
+          "stopCurrentActivity": true,
+          "terminalResult": "COMPLETED_TODAY"
+        },
+        {
+          "name": "状态待确认",
+          "message": "蓄意轰拳当前状态暂不明确，请手动处理后再继续",
+          "stopCurrentActivity": true
+        }
+      ]
+    },
+    "completeRules": [
+      {
+        "message": "蓄意轰拳奖励已全部领取",
+        "conditions": [
+          {
+            "path": "angel.received[0]",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.received[1]",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.received[2]",
+            "operator": "EQ",
+            "value": "1"
+          }
+        ]
+      }
+    ]
+  }
+}

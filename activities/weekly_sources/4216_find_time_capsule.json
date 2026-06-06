@@ -1,0 +1,327 @@
+{
+  "name": "寻找时光胶囊",
+  "type": 1,
+  "combat": false,
+  "expiredTimestamp": 0,
+  "key": "find_time_capsule_4216",
+  "workflow": {
+    "strategy": "QUERY_BRANCH_LOOP_WITH_INTERVAL",
+    "cgi": "find_time_capsule",
+    "maxRounds": 16,
+    "intervalMs": 20000,
+    "bindings": [
+      {
+        "name": "activeIndex",
+        "resolver": "PATH",
+        "path": "angel.index"
+      },
+      {
+        "name": "timedCapsuleIndex",
+        "resolver": "FIRST_INDEX_EQUAL",
+        "path": "angel.event",
+        "compareValue": "2",
+        "indexBase": 1
+      },
+      {
+        "name": "battleCapsuleIndex",
+        "resolver": "FIRST_INDEX_EQUAL",
+        "path": "angel.event",
+        "compareValue": "1",
+        "indexBase": 1
+      },
+      {
+        "name": "timedSceneId",
+        "resolver": "MAPPED_BINDING",
+        "sourceBinding": "timedCapsuleIndex",
+        "mapping": {
+          "1": "223",
+          "2": "225",
+          "3": "222"
+        }
+      },
+      {
+        "name": "battleSceneId",
+        "resolver": "MAPPED_BINDING",
+        "sourceBinding": "battleCapsuleIndex",
+        "mapping": {
+          "1": "223",
+          "2": "225",
+          "3": "222"
+        }
+      },
+      {
+        "name": "activeSceneId",
+        "resolver": "MAPPED_BINDING",
+        "sourceBinding": "activeIndex",
+        "mapping": {
+          "1": "223",
+          "2": "225",
+          "3": "222"
+        }
+      }
+    ],
+    "scenes": [
+      {
+        "stage": "BEFORE_ACTION",
+        "sceneIdBinding": "activeSceneId",
+        "message": "寻找时光胶囊：切换到当前进行中的胶囊场景"
+      },
+      {
+        "stage": "BEFORE_ACTION",
+        "sceneIdBinding": "timedSceneId",
+        "message": "寻找时光胶囊：切换到定时事件场景"
+      },
+      {
+        "stage": "BEFORE_ACTION",
+        "sceneIdBinding": "battleSceneId",
+        "message": "寻找时光胶囊：切换到战斗事件场景"
+      }
+    ],
+    "query": {
+      "name": "查询状态",
+      "cmd": 0,
+      "branches": [
+        {
+          "name": "活动已完成",
+          "message": "寻找时光胶囊奖励已领取",
+          "conditions": [
+            {
+              "path": "angel.received",
+              "operator": "EQ",
+              "value": "1"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "最终奖励待手动领取",
+          "message": "寻找时光胶囊已集齐 3 个胶囊，请手动领取最终奖励",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "GTE",
+              "value": "3"
+            },
+            {
+              "path": "angel.received",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "定时事件完成待收尾",
+          "message": "定时事件倒计时结束，尝试提交时光胶囊结果",
+          "conditions": [
+            {
+              "path": "angel.act",
+              "operator": "EQ",
+              "value": "1"
+            },
+            {
+              "path": "angel.times",
+              "operator": "LTE",
+              "value": "0"
+            },
+            {
+              "path": "angel.index",
+              "operator": "GT",
+              "value": "0"
+            }
+          ],
+          "requests": [
+            {
+              "name": "提交定时事件结果",
+              "cmd": 4,
+              "params": [
+                {
+                  "key": "index",
+                  "binding": "activeIndex"
+                }
+              ],
+              "failureMessage": "提交定时事件结果失败，可能仍需手动在场景内完成，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "定时事件进行中",
+          "message": "时光胶囊事件进行中，等待倒计时结束后继续",
+          "conditions": [
+            {
+              "path": "angel.act",
+              "operator": "EQ",
+              "value": "1"
+            },
+            {
+              "path": "angel.times",
+              "operator": "GT",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "name": "今日已完成",
+          "message": "今日寻找时光胶囊已完成",
+          "conditions": [
+            {
+              "path": "angel.time",
+              "operator": "GTE",
+              "value": "1"
+            },
+            {
+              "path": "angel.act",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true,
+          "terminalResult": "COMPLETED_TODAY"
+        },
+        {
+          "name": "启动定时事件",
+          "message": "自动开始一个定时类时光胶囊事件",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "3"
+            },
+            {
+              "path": "angel.time",
+              "operator": "LT",
+              "value": "1"
+            },
+            {
+              "path": "angel.act",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "binding": "timedCapsuleIndex",
+              "operator": "EXISTS",
+              "value": ""
+            }
+          ],
+          "requests": [
+            {
+              "name": "场景内查询状态",
+              "cmd": 0,
+              "failureMessage": "切换场景后查询时光胶囊状态失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            },
+            {
+              "name": "开始定时事件",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "binding": "timedCapsuleIndex"
+                }
+              ],
+              "failureMessage": "开始定时事件失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "挑战战斗类事件",
+          "message": "发现战斗类时光胶囊事件，自动挑战后提交回收结果",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "3"
+            },
+            {
+              "path": "angel.time",
+              "operator": "LT",
+              "value": "1"
+            },
+            {
+              "path": "angel.act",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "binding": "battleCapsuleIndex",
+              "operator": "EXISTS",
+              "value": ""
+            }
+          ],
+          "combat": {
+            "npcId": 800000,
+            "npcName": "寻找时光胶囊"
+          },
+          "afterCombatRequests": [
+            {
+              "name": "提交战斗事件回收结果",
+              "cmd": 3,
+              "params": [
+                {
+                  "key": "index",
+                  "binding": "battleCapsuleIndex"
+                }
+              ],
+              "failureMessage": "提交战斗事件结果失败，可能仍需手动完成战斗，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterCombat": true
+        },
+        {
+          "name": "没有可处理事件",
+          "message": "当前没有可自动处理的时光胶囊事件，请手动确认活动状态",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "3"
+            },
+            {
+              "path": "angel.time",
+              "operator": "LT",
+              "value": "1"
+            },
+            {
+              "path": "angel.act",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "binding": "timedCapsuleIndex",
+              "operator": "NOT_EXISTS",
+              "value": ""
+            },
+            {
+              "binding": "battleCapsuleIndex",
+              "operator": "NOT_EXISTS",
+              "value": ""
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "状态待确认",
+          "message": "寻找时光胶囊当前状态暂不明确，请手动确认后再继续",
+          "stopCurrentActivity": true
+        }
+      ]
+    },
+    "completeRules": [
+      {
+        "message": "寻找时光胶囊奖励已领取",
+        "conditions": [
+          {
+            "path": "angel.received",
+            "operator": "EQ",
+            "value": "1"
+          }
+        ]
+      }
+    ]
+  }
+}

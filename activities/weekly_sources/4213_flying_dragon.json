@@ -1,0 +1,147 @@
+{
+  "name": "飞龙在天",
+  "type": 1,
+  "combat": false,
+  "expiredTimestamp": 0,
+  "key": "flying_dragon_4213",
+  "workflow": {
+    "strategy": "QUERY_BRANCH_LOOP_IMMEDIATE",
+    "cgi": "flying_dragon",
+    "maxRounds": 8,
+    "query": {
+      "name": "查询状态",
+      "cmd": 0,
+      "branches": [
+        {
+          "name": "奖励已全部领取",
+          "message": "飞龙在天奖励已全部领取",
+          "conditions": [
+            {
+              "path": "angel.received[0]",
+              "operator": "EQ",
+              "value": "1"
+            },
+            {
+              "path": "angel.received[1]",
+              "operator": "EQ",
+              "value": "1"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "300亮晶晶奖励待手动领取",
+          "message": "亮晶晶物质已达到 300，请手动领取第二档奖励",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "GTE",
+              "value": "300"
+            },
+            {
+              "path": "angel.received[1]",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "200亮晶晶奖励待手动处理",
+          "message": "亮晶晶物质已达到 200，请手动处理第一档奖励",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "GTE",
+              "value": "200"
+            },
+            {
+              "path": "angel.received[0]",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "今日已完成",
+          "message": "今日飞龙在天已完成",
+          "conditions": [
+            {
+              "path": "angel.time",
+              "operator": "GTE",
+              "value": "100"
+            }
+          ],
+          "stopCurrentActivity": true,
+          "terminalResult": "COMPLETED_TODAY"
+        },
+        {
+          "name": "活动已打满总进度",
+          "message": "飞龙在天总进度已满，请手动处理剩余奖励",
+          "conditions": [
+            {
+              "path": "angel.schedule",
+              "operator": "GTE",
+              "value": "500"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "执行一次保底小游戏",
+          "message": "自动提交一次保底飞行成绩 100 分",
+          "conditions": [
+            {
+              "path": "angel.time",
+              "operator": "LT",
+              "value": "100"
+            },
+            {
+              "path": "angel.schedule",
+              "operator": "LT",
+              "value": "500"
+            }
+          ],
+          "requests": [
+            {
+              "name": "提交保底飞行成绩",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "score",
+                  "value": "100"
+                }
+              ],
+              "failureMessage": "提交飞龙在天小游戏结果失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "状态待确认",
+          "message": "飞龙在天当前状态暂不明确，请手动处理后再继续",
+          "stopCurrentActivity": true
+        }
+      ]
+    },
+    "completeRules": [
+      {
+        "message": "飞龙在天奖励已全部领取",
+        "conditions": [
+          {
+            "path": "angel.received[0]",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.received[1]",
+            "operator": "EQ",
+            "value": "1"
+          }
+        ]
+      }
+    ]
+  }
+}
