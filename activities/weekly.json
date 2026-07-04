@@ -20,9 +20,9 @@
         "expired": false
       },
       {
-        "id": 4242,
+        "id": 4222,
         "name": "童话镇大冒险",
-        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4242_fairy_tale_battle.json",
+        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4222_fairy_tale_battle.json",
         "expired": false
       }
     ]
