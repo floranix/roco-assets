@@ -3,7 +3,7 @@
   "type": 1,
   "combat": false,
   "expiredTimestamp": 0,
-  "key": "fairy_tale_battle_4242",
+  "key": "fairy_tale_battle_4222",
   "workflow": {
     "strategy": "QUERY_BRANCH_LOOP_IMMEDIATE",
     "cgi": "fairy_tale_battle",
