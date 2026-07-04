@@ -1,0 +1,291 @@
+{
+  "name": "启幕童话镇",
+  "type": 1,
+  "combat": false,
+  "expiredTimestamp": 0,
+  "key": "fairy_tale_town_4212",
+  "workflow": {
+    "strategy": "QUERY_BRANCH_LOOP_IMMEDIATE",
+    "cgi": "fairy_tale_town",
+    "maxRounds": 12,
+    "bindings": [
+      {
+        "name": "unlockedWorldCount",
+        "resolver": "PATH",
+        "path": "angel.unlock"
+      },
+      {
+        "name": "activeWorldIndex",
+        "resolver": "PATH",
+        "path": "angel.playlevel"
+      },
+      {
+        "name": "firstUnclearedWorldIndex",
+        "resolver": "FIRST_INDEX_EQUAL",
+        "path": "angel.cleared",
+        "compareValue": "0",
+        "indexBase": 1
+      },
+      {
+        "name": "firstClearedWorldIndex",
+        "resolver": "FIRST_INDEX_EQUAL",
+        "path": "angel.cleared",
+        "compareValue": "1",
+        "indexBase": 1
+      }
+    ],
+    "query": {
+      "name": "查询状态",
+      "cmd": 0,
+      "branches": [
+        {
+          "name": "领取时段体力",
+          "message": "检测到可领取的限时体力，自动领取 60 点体力",
+          "conditions": [
+            {
+              "path": "angel.claimed",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.intime",
+              "operator": "EQ",
+              "value": "1"
+            }
+          ],
+          "requests": [
+            {
+              "name": "领取时段体力",
+              "cmd": 3,
+              "failureMessage": "领取限时体力失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "存在未结算探索",
+          "message": "检测到当前存在未结算的探索流程，请先手动完成后再继续",
+          "conditions": [
+            {
+              "path": "angel.playing",
+              "operator": "EQ",
+              "value": "1"
+            },
+            {
+              "binding": "activeWorldIndex",
+              "operator": "EXISTS",
+              "value": ""
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "推进未通关世界",
+          "message": "存在已解锁且未通关的世界，自动完成本轮探索",
+          "conditions": [
+            {
+              "path": "angel.time",
+              "operator": "LT",
+              "value": "240"
+            },
+            {
+              "path": "angel.playing",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.stamina",
+              "operator": "GTE",
+              "value": "40"
+            },
+            {
+              "binding": "firstUnclearedWorldIndex",
+              "operator": "EXISTS",
+              "value": ""
+            },
+            {
+              "binding": "firstUnclearedWorldIndex",
+              "operator": "LTE",
+              "valueBinding": "unlockedWorldCount"
+            }
+          ],
+          "requests": [
+            {
+              "name": "进入未通关世界",
+              "cmd": 1,
+              "params": [
+                {
+                  "key": "index",
+                  "binding": "firstUnclearedWorldIndex"
+                }
+              ],
+              "failureMessage": "进入未通关世界失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            },
+            {
+              "name": "推进探索步骤1",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "type",
+                  "value": "1"
+                },
+                {
+                  "key": "index",
+                  "binding": "firstUnclearedWorldIndex"
+                },
+                {
+                  "key": "step",
+                  "value": "1"
+                }
+              ],
+              "failureMessage": "推进探索步骤 1 失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            },
+            {
+              "name": "推进探索步骤2",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "type",
+                  "value": "1"
+                },
+                {
+                  "key": "index",
+                  "binding": "firstUnclearedWorldIndex"
+                },
+                {
+                  "key": "step",
+                  "value": "2"
+                }
+              ],
+              "failureMessage": "推进探索步骤 2 失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            },
+            {
+              "name": "推进探索步骤3",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "type",
+                  "value": "1"
+                },
+                {
+                  "key": "index",
+                  "binding": "firstUnclearedWorldIndex"
+                },
+                {
+                  "key": "step",
+                  "value": "3"
+                }
+              ],
+              "failureMessage": "推进探索步骤 3 失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            },
+            {
+              "name": "提交小游戏胜利结果",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "type",
+                  "value": "2"
+                },
+                {
+                  "key": "result",
+                  "value": "1"
+                },
+                {
+                  "key": "index",
+                  "binding": "firstUnclearedWorldIndex"
+                }
+              ],
+              "failureMessage": "提交小游戏胜利结果失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "快速探索已通关世界",
+          "message": "当前没有新的已解锁世界，自动快速探索已通关世界",
+          "conditions": [
+            {
+              "path": "angel.time",
+              "operator": "LT",
+              "value": "240"
+            },
+            {
+              "path": "angel.playing",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.stamina",
+              "operator": "GTE",
+              "value": "40"
+            },
+            {
+              "binding": "firstClearedWorldIndex",
+              "operator": "EXISTS",
+              "value": ""
+            }
+          ],
+          "requests": [
+            {
+              "name": "快速探索已通关世界",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "type",
+                  "value": "3"
+                },
+                {
+                  "key": "index",
+                  "binding": "firstClearedWorldIndex"
+                }
+              ],
+              "failureMessage": "快速探索失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "体力不足",
+          "message": "当前体力不足 40，且暂无可领取体力，跳过当前活动",
+          "conditions": [
+            {
+              "path": "angel.time",
+              "operator": "LT",
+              "value": "240"
+            },
+            {
+              "path": "angel.stamina",
+              "operator": "LT",
+              "value": "40"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "没有可自动处理的世界",
+          "message": "当前没有可自动处理的世界，请手动确认活动进度",
+          "stopCurrentActivity": true
+        }
+      ]
+    },
+    "completeRules": [
+      {
+        "message": "今日启幕童话镇活动已完成",
+        "conditions": [
+          {
+            "path": "angel.time",
+            "operator": "GTE",
+            "value": "240"
+          }
+        ]
+      }
+    ]
+  }
+}

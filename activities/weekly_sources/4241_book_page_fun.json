@@ -1,0 +1,365 @@
+{
+  "name": "书页藏趣",
+  "type": 1,
+  "combat": false,
+  "expiredTimestamp": 0,
+  "key": "book_page_fun_4241",
+  "workflow": {
+    "strategy": "QUERY_BRANCH_LOOP_IMMEDIATE",
+    "cgi": "book_page_fun",
+    "maxRounds": 400,
+    "bindings": [
+      {
+        "name": "unopenedIndex",
+        "resolver": "FIRST_INDEX_EQUAL",
+        "path": "angel.box",
+        "compareValue": "0",
+        "indexBase": 1
+      },
+      {
+        "name": "foundEggIndex",
+        "resolver": "FIRST_INDEX_EQUAL",
+        "path": "angel.box",
+        "compareValue": "1",
+        "indexBase": 1
+      },
+      {
+        "name": "selectedBoxState",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.box",
+        "sourceBinding": "bookAction",
+        "indexBase": 1
+      }
+    ],
+    "query": {
+      "name": "查询状态",
+      "cmd": 0,
+      "branches": [
+        {
+          "name": "活动主线完成",
+          "message": "书页藏趣层数已满，后续奖励请手动处理",
+          "conditions": [
+            {
+              "path": "angel.level",
+              "operator": "GTE",
+              "value": "200"
+            }
+          ],
+          "stopCurrentActivity": true,
+          "terminalResult": "COMPLETED"
+        },
+        {
+          "name": "关闭当前活动",
+          "message": "已按用户选择结束当前活动",
+          "conditions": [
+            {
+              "binding": "bookAction",
+              "operator": "EQ",
+              "value": "CLOSE_ACTIVITY"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "模式选择关闭当前活动",
+          "message": "已按用户选择结束当前活动",
+          "conditions": [
+            {
+              "binding": "bookMode",
+              "operator": "EQ",
+              "value": "CLOSE_ACTIVITY"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "首次选择处理模式",
+          "message": "请选择书页藏趣的处理模式",
+          "conditions": [
+            {
+              "binding": "bookMode",
+              "operator": "NOT_EXISTS",
+              "value": ""
+            }
+          ],
+          "choice": {
+            "title": "书页藏趣",
+            "message": "可选择手动翻页或自动寻找彩蛋，关闭则跳过当前活动",
+            "mode": "SINGLE",
+            "timeoutSeconds": 180,
+            "resultBinding": "bookMode",
+            "defaultSelectedValues": [
+              "MANUAL"
+            ],
+            "options": [
+              {
+                "label": "手动翻页",
+                "value": "MANUAL",
+                "selected": true
+              },
+              {
+                "label": "自动找彩蛋",
+                "value": "AUTO"
+              },
+              {
+                "label": "关闭当前活动",
+                "value": "CLOSE_ACTIVITY"
+              }
+            ]
+          }
+        },
+        {
+          "name": "自动模式进入下一层",
+          "message": "自动模式已找到彩蛋，进入下一层",
+          "conditions": [
+            {
+              "binding": "bookMode",
+              "operator": "EQ",
+              "value": "AUTO"
+            },
+            {
+              "binding": "foundEggIndex",
+              "operator": "EXISTS",
+              "value": ""
+            }
+          ],
+          "requests": [
+            {
+              "name": "进入下一层",
+              "cmd": 6,
+              "failureMessage": "进入下一层失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "手动模式进入下一层",
+          "message": "手动模式进入下一层",
+          "conditions": [
+            {
+              "binding": "bookMode",
+              "operator": "EQ",
+              "value": "MANUAL"
+            },
+            {
+              "binding": "bookAction",
+              "operator": "EQ",
+              "value": "NEXT_LEVEL"
+            },
+            {
+              "binding": "foundEggIndex",
+              "operator": "EXISTS",
+              "value": ""
+            }
+          ],
+          "requests": [
+            {
+              "name": "进入下一层",
+              "cmd": 6,
+              "failureMessage": "进入下一层失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "书签不足",
+          "message": "书签数量不足，当前跳过书页藏趣",
+          "conditions": [
+            {
+              "binding": "foundEggIndex",
+              "operator": "NOT_EXISTS",
+              "value": ""
+            },
+            {
+              "path": "angel.key",
+              "operator": "LTE",
+              "value": "0"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "自动模式继续寻找彩蛋",
+          "message": "自动模式继续翻页寻找彩蛋",
+          "conditions": [
+            {
+              "binding": "bookMode",
+              "operator": "EQ",
+              "value": "AUTO"
+            },
+            {
+              "binding": "foundEggIndex",
+              "operator": "NOT_EXISTS",
+              "value": ""
+            },
+            {
+              "binding": "unopenedIndex",
+              "operator": "EXISTS",
+              "value": ""
+            },
+            {
+              "path": "angel.key",
+              "operator": "GT",
+              "value": "0"
+            }
+          ],
+          "requests": [
+            {
+              "name": "自动寻找彩蛋",
+              "cmd": 5,
+              "failureMessage": "自动寻找彩蛋失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "手动模式翻开指定书页",
+          "message": "按用户选择翻开对应书页",
+          "conditions": [
+            {
+              "binding": "bookMode",
+              "operator": "EQ",
+              "value": "MANUAL"
+            },
+            {
+              "binding": "selectedBoxState",
+              "operator": "EQ",
+              "value": "0"
+            }
+          ],
+          "requests": [
+            {
+              "name": "翻开书页",
+              "cmd": 4,
+              "params": [
+                {
+                  "key": "index",
+                  "binding": "bookAction"
+                }
+              ],
+              "failureMessage": "翻开书页失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "手动模式-已找到彩蛋",
+          "message": "已找到本层彩蛋，可继续翻页，也可直接进入下一层",
+          "conditions": [
+            {
+              "binding": "bookMode",
+              "operator": "EQ",
+              "value": "MANUAL"
+            },
+            {
+              "binding": "foundEggIndex",
+              "operator": "EXISTS",
+              "value": ""
+            }
+          ],
+          "choice": {
+            "title": "书页藏趣",
+            "message": "请选择一个书页继续开启，或直接进入下一层；关闭可跳过当前活动",
+            "mode": "SINGLE",
+            "timeoutSeconds": 300,
+            "resultBinding": "bookAction",
+            "defaultSelectedValues": [
+              "NEXT_LEVEL"
+            ],
+            "options": [
+              {
+                "label": "下一层",
+                "value": "NEXT_LEVEL"
+              },
+              {
+                "label": "关闭活动",
+                "value": "CLOSE_ACTIVITY"
+              }
+            ],
+            "optionSource": {
+              "path": "angel.box",
+              "operator": "EQ",
+              "value": "0",
+              "indexBase": 1,
+              "valueMode": "INDEX",
+              "includeDisabledOptions": true
+            }
+          }
+        },
+        {
+          "name": "手动模式-继续翻页",
+          "message": "请选择一个书页开启，灰色格子表示已翻开；关闭可跳过当前活动",
+          "conditions": [
+            {
+              "binding": "bookMode",
+              "operator": "EQ",
+              "value": "MANUAL"
+            },
+            {
+              "binding": "foundEggIndex",
+              "operator": "NOT_EXISTS",
+              "value": ""
+            },
+            {
+              "binding": "unopenedIndex",
+              "operator": "EXISTS",
+              "value": ""
+            },
+            {
+              "path": "angel.key",
+              "operator": "GT",
+              "value": "0"
+            }
+          ],
+          "choice": {
+            "title": "书页藏趣",
+            "message": "请选择一个书页开启，找到彩蛋后即可解锁下一层按钮",
+            "mode": "SINGLE",
+            "timeoutSeconds": 300,
+            "resultBinding": "bookAction",
+            "options": [
+              {
+                "label": "下一层",
+                "value": "NEXT_LEVEL",
+                "enabled": false
+              },
+              {
+                "label": "关闭活动",
+                "value": "CLOSE_ACTIVITY"
+              }
+            ],
+            "optionSource": {
+              "path": "angel.box",
+              "operator": "EQ",
+              "value": "0",
+              "indexBase": 1,
+              "valueMode": "INDEX",
+              "includeDisabledOptions": true
+            }
+          }
+        },
+        {
+          "name": "当前层已无可翻书页",
+          "message": "当前层已无可翻书页，结束当前活动",
+          "conditions": [
+            {
+              "binding": "unopenedIndex",
+              "operator": "NOT_EXISTS",
+              "value": ""
+            },
+            {
+              "binding": "foundEggIndex",
+              "operator": "NOT_EXISTS",
+              "value": ""
+            }
+          ],
+          "stopCurrentActivity": true
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,359 @@
+{
+  "name": "童话镇大冒险",
+  "type": 1,
+  "combat": false,
+  "expiredTimestamp": 0,
+  "key": "fairy_tale_battle_4242",
+  "workflow": {
+    "strategy": "QUERY_BRANCH_LOOP_IMMEDIATE",
+    "cgi": "fairy_tale_battle",
+    "maxRounds": 80,
+    "runtimeBindings": [
+      {
+        "name": "rollPoint",
+        "resolver": "RANDOM_INT",
+        "value": "1",
+        "compareValue": "6"
+      }
+    ],
+    "bindings": [
+      {
+        "name": "currentToll",
+        "resolver": "PATH",
+        "path": "angel.toll"
+      },
+      {
+        "name": "currentPending",
+        "resolver": "PATH",
+        "path": "angel.pending"
+      },
+      {
+        "name": "firstAlivePetPos",
+        "resolver": "NTH_INDEX_NOT_EQUAL",
+        "path": "angel.pet.hp",
+        "value": "1",
+        "compareValue": "0",
+        "indexBase": 1
+      },
+      {
+        "name": "secondAlivePetPos",
+        "resolver": "NTH_INDEX_NOT_EQUAL",
+        "path": "angel.pet.hp",
+        "value": "2",
+        "compareValue": "0",
+        "indexBase": 1
+      },
+      {
+        "name": "thirdAlivePetPos",
+        "resolver": "NTH_INDEX_NOT_EQUAL",
+        "path": "angel.pet.hp",
+        "value": "3",
+        "compareValue": "0",
+        "indexBase": 1
+      },
+      {
+        "name": "firstAlivePetIdx",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.pet.idx",
+        "sourceBinding": "firstAlivePetPos",
+        "indexBase": 1
+      },
+      {
+        "name": "secondAlivePetIdx",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.pet.idx",
+        "sourceBinding": "secondAlivePetPos",
+        "indexBase": 1
+      },
+      {
+        "name": "thirdAlivePetIdx",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.pet.idx",
+        "sourceBinding": "thirdAlivePetPos",
+        "indexBase": 1
+      }
+    ],
+    "query": {
+      "name": "查询状态",
+      "cmd": 0,
+      "branches": [
+        {
+          "name": "处理随机事件",
+          "message": "命中随机事件，自动结算结果",
+          "conditions": [
+            {
+              "path": "angel.pending",
+              "operator": "EQ",
+              "value": "5"
+            }
+          ],
+          "requests": [
+            {
+              "name": "结算随机事件",
+              "cmd": 8,
+              "failureMessage": "随机事件结算失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "处理城堡战斗",
+          "message": "命中城堡，使用当前存活的前三只活动宠物尝试挑战",
+          "conditions": [
+            {
+              "path": "angel.pending",
+              "operator": "EQ",
+              "value": "4"
+            },
+            {
+              "binding": "firstAlivePetIdx",
+              "operator": "EXISTS",
+              "value": ""
+            },
+            {
+              "binding": "secondAlivePetIdx",
+              "operator": "EXISTS",
+              "value": ""
+            },
+            {
+              "binding": "thirdAlivePetIdx",
+              "operator": "EXISTS",
+              "value": ""
+            }
+          ],
+          "requests": [
+            {
+              "name": "挑战城堡守卫",
+              "cmd": 7,
+              "params": [
+                {
+                  "key": "pet1",
+                  "binding": "firstAlivePetIdx"
+                },
+                {
+                  "key": "pet2",
+                  "binding": "secondAlivePetIdx"
+                },
+                {
+                  "key": "pet3",
+                  "binding": "thirdAlivePetIdx"
+                }
+              ],
+              "failureMessage": "城堡战斗请求失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "活动宠物不足时缴纳过路费",
+          "message": "当前可出战活动宠物不足 3 只，自动缴纳过路费",
+          "conditions": [
+            {
+              "path": "angel.pending",
+              "operator": "EQ",
+              "value": "4"
+            },
+            {
+              "binding": "thirdAlivePetIdx",
+              "operator": "NOT_EXISTS",
+              "value": ""
+            },
+            {
+              "path": "angel.gold",
+              "operator": "GTE",
+              "valueBinding": "currentToll"
+            }
+          ],
+          "requests": [
+            {
+              "name": "缴纳过路费",
+              "cmd": 6,
+              "params": [
+                {
+                  "key": "type",
+                  "value": "2"
+                }
+              ],
+              "failureMessage": "缴纳过路费失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "城堡无法继续处理",
+          "message": "当前可出战活动宠物不足，且金币不够支付过路费，结束当前活动",
+          "conditions": [
+            {
+              "path": "angel.pending",
+              "operator": "EQ",
+              "value": "4"
+            },
+            {
+              "binding": "thirdAlivePetIdx",
+              "operator": "NOT_EXISTS",
+              "value": ""
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "关闭商店事件",
+          "message": "命中商店或补给点，当前默认关闭，继续后续流程",
+          "conditions": [
+            {
+              "path": "angel.pending",
+              "operator": "EQ",
+              "value": "1"
+            },
+            {
+              "path": "angel.pending",
+              "operator": "EQ",
+              "value": "2"
+            },
+            {
+              "path": "angel.pending",
+              "operator": "EQ",
+              "value": "3"
+            }
+          ],
+          "match": "ANY",
+          "requests": [
+            {
+              "name": "关闭商店",
+              "cmd": 4,
+              "params": [
+                {
+                  "key": "type",
+                  "binding": "currentPending"
+                },
+                {
+                  "key": "action",
+                  "value": "4"
+                }
+              ],
+              "failureMessage": "关闭当前商店失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "开启宝箱",
+          "message": "宝箱已累计到可开启状态，自动一次性开启",
+          "conditions": [
+            {
+              "path": "angel.pending",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.chest",
+              "operator": "GT",
+              "value": "1"
+            }
+          ],
+          "requests": [
+            {
+              "name": "开启全部宝箱",
+              "cmd": 3,
+              "failureMessage": "开启宝箱失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "领取限时骰子",
+          "message": "当前处于可领取时段，自动领取限时骰子",
+          "conditions": [
+            {
+              "path": "angel.pending",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.intime",
+              "operator": "EQ",
+              "value": "1"
+            },
+            {
+              "path": "angel.claimed",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.dice",
+              "operator": "LT",
+              "value": "24"
+            }
+          ],
+          "requests": [
+            {
+              "name": "领取限时骰子",
+              "cmd": 2,
+              "failureMessage": "领取限时骰子失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "继续掷骰子",
+          "message": "自动随机掷骰子推进童话镇流程",
+          "conditions": [
+            {
+              "path": "angel.pending",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.dice",
+              "operator": "GT",
+              "value": "0"
+            }
+          ],
+          "requests": [
+            {
+              "name": "掷骰子",
+              "cmd": 1,
+              "params": [
+                {
+                  "key": "point",
+                  "binding": "rollPoint"
+                }
+              ],
+              "failureMessage": "掷骰子失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "今日流程已处理完",
+          "message": "当前没有待处理事件，骰子也已用完，本次先结束童话镇大冒险",
+          "conditions": [
+            {
+              "path": "angel.pending",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "path": "angel.dice",
+              "operator": "LTE",
+              "value": "0"
+            },
+            {
+              "path": "angel.chest",
+              "operator": "LTE",
+              "value": "1"
+            }
+          ],
+          "stopCurrentActivity": true
+        }
+      ]
+    }
+  }
+}
