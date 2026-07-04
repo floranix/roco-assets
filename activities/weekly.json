@@ -3,62 +3,26 @@
   "message": "ok",
   "timestamp": 0,
   "data": {
-    "total": 9,
+    "total": 3,
     "page": 1,
     "num": 100,
     "list": [
       {
-        "id": 4195,
-        "name": "小堡移动工坊",
-        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4195_mobile_workshop.json",
+        "id": 4212,
+        "name": "启幕童话镇",
+        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4212_fairy_tale_town.json",
         "expired": false
       },
       {
-        "id": 4200,
-        "name": "宝石翻翻看",
-        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4200_gem_flip.json",
+        "id": 4241,
+        "name": "书页藏趣",
+        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4241_book_page_fun.json",
         "expired": false
       },
       {
-        "id": 4203,
-        "name": "灯火重明",
-        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4203_lanterns_burning.json",
-        "expired": false
-      },
-      {
-        "id": 4204,
-        "name": "弹弓练习",
-        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4204_slingshot_practice.json",
-        "expired": false
-      },
-      {
-        "id": 4205,
-        "name": "念力强化",
-        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4205_psychokinetic_enhancement.json",
-        "expired": false
-      },
-      {
-        "id": 4213,
-        "name": "飞龙在天",
-        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4213_flying_dragon.json",
-        "expired": false
-      },
-      {
-        "id": 4215,
-        "name": "蓄意轰拳",
-        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4215_deliberate_punch.json",
-        "expired": false
-      },
-      {
-        "id": 4216,
-        "name": "寻找时光胶囊",
-        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4216_find_time_capsule.json",
-        "expired": false
-      },
-      {
-        "id": 4217,
-        "name": "快睡吧您",
-        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4217_sweet_dream.json",
+        "id": 4242,
+        "name": "童话镇大冒险",
+        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/4242_fairy_tale_battle.json",
         "expired": false
       }
     ]
