@@ -10,6 +10,16 @@
     "maxRounds": 400,
     "bindings": [
       {
+        "name": "bookKeyCount",
+        "resolver": "PATH",
+        "path": "angel.key"
+      },
+      {
+        "name": "currentBookLevel",
+        "resolver": "PATH",
+        "path": "angel.level"
+      },
+      {
         "name": "unopenedIndex",
         "resolver": "FIRST_INDEX_EQUAL",
         "path": "angel.box",
@@ -73,6 +83,18 @@
           "stopCurrentActivity": true
         },
         {
+          "name": "自动策略选择关闭当前活动",
+          "message": "已按用户选择结束当前活动",
+          "conditions": [
+            {
+              "binding": "bookAutoStopMode",
+              "operator": "EQ",
+              "value": "CLOSE_ACTIVITY"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
           "name": "首次选择处理模式",
           "message": "请选择书页藏趣的处理模式",
           "conditions": [
@@ -109,13 +131,266 @@
           }
         },
         {
-          "name": "自动模式进入下一层",
-          "message": "自动模式已找到彩蛋，进入下一层",
+          "name": "自动模式选择停止策略",
+          "message": "请选择自动找彩蛋的停止策略",
           "conditions": [
             {
               "binding": "bookMode",
               "operator": "EQ",
               "value": "AUTO"
+            },
+            {
+              "binding": "bookAutoStopMode",
+              "operator": "NOT_EXISTS",
+              "value": ""
+            }
+          ],
+          "choice": {
+            "title": "书页藏趣",
+            "message": "请选择自动找彩蛋的停止策略",
+            "mode": "SINGLE",
+            "timeoutSeconds": 180,
+            "resultBinding": "bookAutoStopMode",
+            "defaultSelectedValues": [
+              "AUTO_STOP_AFTER_CURRENT_EGG"
+            ],
+            "options": [
+              {
+                "label": "找到本层彩蛋后停止",
+                "value": "AUTO_STOP_AFTER_CURRENT_EGG",
+                "selected": true
+              },
+              {
+                "label": "找到指定层数彩蛋后停止",
+                "value": "AUTO_STOP_AFTER_TARGET_EGGS"
+              },
+              {
+                "label": "一直找彩蛋直到书签不足",
+                "value": "AUTO_STOP_UNTIL_NO_KEYS"
+              },
+              {
+                "label": "关闭当前活动",
+                "value": "CLOSE_ACTIVITY"
+              }
+            ]
+          }
+        },
+        {
+          "name": "自动模式输入目标层数",
+          "message": "请输入需要继续自动找彩蛋的层数",
+          "conditions": [
+            {
+              "binding": "bookMode",
+              "operator": "EQ",
+              "value": "AUTO"
+            },
+            {
+              "binding": "bookAutoStopMode",
+              "operator": "EQ",
+              "value": "AUTO_STOP_AFTER_TARGET_EGGS"
+            },
+            {
+              "binding": "bookAutoStopAbsoluteLevel",
+              "operator": "NOT_EXISTS",
+              "value": ""
+            }
+          ],
+          "choice": {
+            "title": "书页藏趣",
+            "message": "请输入目标层数，默认 1，最小 1，最大 20",
+            "mode": "SINGLE",
+            "timeoutSeconds": 180,
+            "resultBinding": "bookAutoStopAbsoluteLevel",
+            "resultTransform": {
+              "type": "ADD_BINDING_VALUE",
+              "binding": "currentBookLevel",
+              "offset": -1
+            },
+            "defaultSelectedValues": [
+              "1"
+            ],
+            "options": [
+              {
+                "label": "1",
+                "value": "1",
+                "selected": true
+              },
+              {
+                "label": "2",
+                "value": "2"
+              },
+              {
+                "label": "3",
+                "value": "3"
+              },
+              {
+                "label": "4",
+                "value": "4"
+              },
+              {
+                "label": "5",
+                "value": "5"
+              },
+              {
+                "label": "6",
+                "value": "6"
+              },
+              {
+                "label": "7",
+                "value": "7"
+              },
+              {
+                "label": "8",
+                "value": "8"
+              },
+              {
+                "label": "9",
+                "value": "9"
+              },
+              {
+                "label": "10",
+                "value": "10"
+              },
+              {
+                "label": "11",
+                "value": "11"
+              },
+              {
+                "label": "12",
+                "value": "12"
+              },
+              {
+                "label": "13",
+                "value": "13"
+              },
+              {
+                "label": "14",
+                "value": "14"
+              },
+              {
+                "label": "15",
+                "value": "15"
+              },
+              {
+                "label": "16",
+                "value": "16"
+              },
+              {
+                "label": "17",
+                "value": "17"
+              },
+              {
+                "label": "18",
+                "value": "18"
+              },
+              {
+                "label": "19",
+                "value": "19"
+              },
+              {
+                "label": "20",
+                "value": "20"
+              }
+            ]
+          }
+        },
+        {
+          "name": "自动模式-找到本层彩蛋后停止",
+          "message": "自动模式已找到本层彩蛋，按策略停止",
+          "conditions": [
+            {
+              "binding": "bookMode",
+              "operator": "EQ",
+              "value": "AUTO"
+            },
+            {
+              "binding": "bookAutoStopMode",
+              "operator": "EQ",
+              "value": "AUTO_STOP_AFTER_CURRENT_EGG"
+            },
+            {
+              "binding": "foundEggIndex",
+              "operator": "EXISTS",
+              "value": ""
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "自动模式-达到目标层数后停止",
+          "message": "自动模式已达到设定层数，按策略停止",
+          "conditions": [
+            {
+              "binding": "bookMode",
+              "operator": "EQ",
+              "value": "AUTO"
+            },
+            {
+              "binding": "bookAutoStopMode",
+              "operator": "EQ",
+              "value": "AUTO_STOP_AFTER_TARGET_EGGS"
+            },
+            {
+              "binding": "foundEggIndex",
+              "operator": "EXISTS",
+              "value": ""
+            },
+            {
+              "binding": "currentBookLevel",
+              "operator": "GTE",
+              "valueBinding": "bookAutoStopAbsoluteLevel"
+            }
+          ],
+          "stopCurrentActivity": true
+        },
+        {
+          "name": "自动模式-继续进入下一层直到目标层数",
+          "message": "自动模式已找到彩蛋，继续进入下一层",
+          "conditions": [
+            {
+              "binding": "bookMode",
+              "operator": "EQ",
+              "value": "AUTO"
+            },
+            {
+              "binding": "bookAutoStopMode",
+              "operator": "EQ",
+              "value": "AUTO_STOP_AFTER_TARGET_EGGS"
+            },
+            {
+              "binding": "foundEggIndex",
+              "operator": "EXISTS",
+              "value": ""
+            },
+            {
+              "binding": "currentBookLevel",
+              "operator": "LT",
+              "valueBinding": "bookAutoStopAbsoluteLevel"
+            }
+          ],
+          "requests": [
+            {
+              "name": "进入下一层",
+              "cmd": 6,
+              "failureMessage": "进入下一层失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "自动模式-继续进入下一层直到书签不足",
+          "message": "自动模式已找到彩蛋，继续进入下一层",
+          "conditions": [
+            {
+              "binding": "bookMode",
+              "operator": "EQ",
+              "value": "AUTO"
+            },
+            {
+              "binding": "bookAutoStopMode",
+              "operator": "EQ",
+              "value": "AUTO_STOP_UNTIL_NO_KEYS"
             },
             {
               "binding": "foundEggIndex",
