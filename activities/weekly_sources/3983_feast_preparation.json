@@ -1,0 +1,875 @@
+{
+  "name": "盛宴筹备",
+  "type": 1,
+  "combat": true,
+  "expiredTimestamp": 0,
+  "key": "feast_preparation_new_3983",
+  "workflow": {
+    "strategy": "QUERY_BRANCH_LOOP_WITH_INTERVAL",
+    "cgi": "feast_preparation_new",
+    "maxRounds": 80,
+    "intervalMs": 20000,
+    "bindings": [
+      {
+        "name": "maxOrder",
+        "resolver": "MAPPED_PATH",
+        "path": "angel.vip",
+        "mapping": {
+          "0": "5",
+          "1": "7"
+        }
+      },
+      {
+        "name": "arenaMissionIndex",
+        "resolver": "PATH",
+        "path": "angel.Mission[0].index"
+      },
+      {
+        "name": "treasureMissionIndex",
+        "resolver": "PATH",
+        "path": "angel.Mission[1].index"
+      },
+      {
+        "name": "merchantMissionIndex",
+        "resolver": "PATH",
+        "path": "angel.Mission[2].index"
+      },
+      {
+        "name": "messengerMissionIndex",
+        "resolver": "PATH",
+        "path": "angel.Mission[3].index"
+      },
+      {
+        "name": "messengerSceneId",
+        "resolver": "MAPPED_BINDING",
+        "sourceBinding": "messengerMissionIndex",
+        "mapping": {
+          "1": "50",
+          "2": "2",
+          "3": "4",
+          "4": "57",
+          "5": "24"
+        }
+      },
+      {
+        "name": "arenaNpcId",
+        "resolver": "MAPPED_BINDING",
+        "sourceBinding": "arenaMissionIndex",
+        "mapping": {
+          "1": "803446",
+          "2": "803476",
+          "3": "803478",
+          "4": "803485",
+          "5": "803653"
+        }
+      },
+      {
+        "name": "arenaNpcName",
+        "resolver": "MAPPED_BINDING",
+        "sourceBinding": "arenaMissionIndex",
+        "mapping": {
+          "1": "火羽",
+          "2": "雷霆妙尔尼",
+          "3": "哈妙尔",
+          "4": "火云邪神",
+          "5": "圣翼狮王"
+        }
+      },
+      {
+        "name": "treasureTargetAttr",
+        "resolver": "MAPPED_BINDING",
+        "sourceBinding": "treasureMissionIndex",
+        "mapping": {
+          "1": "6",
+          "2": "2",
+          "3": "5"
+        }
+      },
+      {
+        "name": "treasureTargetAttrName",
+        "resolver": "MAPPED_BINDING",
+        "sourceBinding": "treasureTargetAttr",
+        "mapping": {
+          "2": "火系",
+          "5": "草系",
+          "6": "冰系"
+        }
+      },
+      {
+        "name": "order1Want1",
+        "resolver": "PATH",
+        "path": "angel.Order[0].want[0]"
+      },
+      {
+        "name": "order1Want2",
+        "resolver": "PATH",
+        "path": "angel.Order[0].want[1]"
+      },
+      {
+        "name": "order1Want1Count",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.item",
+        "sourceBinding": "order1Want1",
+        "indexBase": 1
+      },
+      {
+        "name": "order1Want2Count",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.item",
+        "sourceBinding": "order1Want2",
+        "indexBase": 1
+      },
+      {
+        "name": "order2Want1",
+        "resolver": "PATH",
+        "path": "angel.Order[1].want[0]"
+      },
+      {
+        "name": "order2Want2",
+        "resolver": "PATH",
+        "path": "angel.Order[1].want[1]"
+      },
+      {
+        "name": "order2Want1Count",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.item",
+        "sourceBinding": "order2Want1",
+        "indexBase": 1
+      },
+      {
+        "name": "order2Want2Count",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.item",
+        "sourceBinding": "order2Want2",
+        "indexBase": 1
+      },
+      {
+        "name": "order3Want1",
+        "resolver": "PATH",
+        "path": "angel.Order[2].want[0]"
+      },
+      {
+        "name": "order3Want2",
+        "resolver": "PATH",
+        "path": "angel.Order[2].want[1]"
+      },
+      {
+        "name": "order3Want1Count",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.item",
+        "sourceBinding": "order3Want1",
+        "indexBase": 1
+      },
+      {
+        "name": "order3Want2Count",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.item",
+        "sourceBinding": "order3Want2",
+        "indexBase": 1
+      },
+      {
+        "name": "order4Want1",
+        "resolver": "PATH",
+        "path": "angel.Order[3].want[0]"
+      },
+      {
+        "name": "order4Want2",
+        "resolver": "PATH",
+        "path": "angel.Order[3].want[1]"
+      },
+      {
+        "name": "order4Want1Count",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.item",
+        "sourceBinding": "order4Want1",
+        "indexBase": 1
+      },
+      {
+        "name": "order4Want2Count",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.item",
+        "sourceBinding": "order4Want2",
+        "indexBase": 1
+      },
+      {
+        "name": "order5Want1",
+        "resolver": "PATH",
+        "path": "angel.Order[4].want[0]"
+      },
+      {
+        "name": "order5Want2",
+        "resolver": "PATH",
+        "path": "angel.Order[4].want[1]"
+      },
+      {
+        "name": "order5Want1Count",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.item",
+        "sourceBinding": "order5Want1",
+        "indexBase": 1
+      },
+      {
+        "name": "order5Want2Count",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.item",
+        "sourceBinding": "order5Want2",
+        "indexBase": 1
+      },
+      {
+        "name": "order6Want1",
+        "resolver": "PATH",
+        "path": "angel.Order[5].want[0]"
+      },
+      {
+        "name": "order6Want2",
+        "resolver": "PATH",
+        "path": "angel.Order[5].want[1]"
+      },
+      {
+        "name": "order6Want1Count",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.item",
+        "sourceBinding": "order6Want1",
+        "indexBase": 1
+      },
+      {
+        "name": "order6Want2Count",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.item",
+        "sourceBinding": "order6Want2",
+        "indexBase": 1
+      },
+      {
+        "name": "order7Want1",
+        "resolver": "PATH",
+        "path": "angel.Order[6].want[0]"
+      },
+      {
+        "name": "order7Want2",
+        "resolver": "PATH",
+        "path": "angel.Order[6].want[1]"
+      },
+      {
+        "name": "order7Want1Count",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.item",
+        "sourceBinding": "order7Want1",
+        "indexBase": 1
+      },
+      {
+        "name": "order7Want2Count",
+        "resolver": "VALUE_AT_BINDING_INDEX",
+        "path": "angel.item",
+        "sourceBinding": "order7Want2",
+        "indexBase": 1
+      },
+      {
+        "name": "treasureSpirit1Pos",
+        "resolver": "NTH_INDEX_MATCHING_BINDING",
+        "path": "angel.PetInfo.attr",
+        "value": "1",
+        "compareBinding": "treasureTargetAttr",
+        "indexBase": 1
+      },
+      {
+        "name": "treasureSpirit2Pos",
+        "resolver": "NTH_INDEX_MATCHING_BINDING",
+        "path": "angel.PetInfo.attr",
+        "value": "2",
+        "compareBinding": "treasureTargetAttr",
+        "indexBase": 1
+      },
+      {
+        "name": "treasureSpirit3Pos",
+        "resolver": "NTH_INDEX_MATCHING_BINDING",
+        "path": "angel.PetInfo.attr",
+        "value": "3",
+        "compareBinding": "treasureTargetAttr",
+        "indexBase": 1
+      }
+    ],
+    "query": {
+      "name": "查询状态",
+      "cmd": 0,
+      "branches": [
+        {
+          "name": "提交订单1",
+          "message": "材料满足，自动提交第 1 个订单",
+          "conditions": [
+            {
+              "path": "angel.Order[0].status",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "binding": "order1Want1Count",
+              "operator": "GT",
+              "value": "0"
+            },
+            {
+              "binding": "order1Want2Count",
+              "operator": "GT",
+              "value": "0"
+            }
+          ],
+          "requests": [
+            {
+              "name": "提交订单1",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "value": "1"
+                }
+              ],
+              "failureMessage": "提交第 1 个订单失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "提交订单2",
+          "message": "材料满足，自动提交第 2 个订单",
+          "conditions": [
+            {
+              "path": "angel.Order[1].status",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "binding": "order2Want1Count",
+              "operator": "GT",
+              "value": "0"
+            },
+            {
+              "binding": "order2Want2Count",
+              "operator": "GT",
+              "value": "0"
+            }
+          ],
+          "requests": [
+            {
+              "name": "提交订单2",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "value": "2"
+                }
+              ],
+              "failureMessage": "提交第 2 个订单失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "提交订单3",
+          "message": "材料满足，自动提交第 3 个订单",
+          "conditions": [
+            {
+              "path": "angel.Order[2].status",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "binding": "order3Want1Count",
+              "operator": "GT",
+              "value": "0"
+            },
+            {
+              "binding": "order3Want2Count",
+              "operator": "GT",
+              "value": "0"
+            }
+          ],
+          "requests": [
+            {
+              "name": "提交订单3",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "value": "3"
+                }
+              ],
+              "failureMessage": "提交第 3 个订单失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "提交订单4",
+          "message": "材料满足，自动提交第 4 个订单",
+          "conditions": [
+            {
+              "path": "angel.Order[3].status",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "binding": "order4Want1Count",
+              "operator": "GT",
+              "value": "0"
+            },
+            {
+              "binding": "order4Want2Count",
+              "operator": "GT",
+              "value": "0"
+            }
+          ],
+          "requests": [
+            {
+              "name": "提交订单4",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "value": "4"
+                }
+              ],
+              "failureMessage": "提交第 4 个订单失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "提交订单5",
+          "message": "材料满足，自动提交第 5 个订单",
+          "conditions": [
+            {
+              "path": "angel.Order[4].status",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "binding": "order5Want1Count",
+              "operator": "GT",
+              "value": "0"
+            },
+            {
+              "binding": "order5Want2Count",
+              "operator": "GT",
+              "value": "0"
+            }
+          ],
+          "requests": [
+            {
+              "name": "提交订单5",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "value": "5"
+                }
+              ],
+              "failureMessage": "提交第 5 个订单失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "提交订单6",
+          "message": "材料满足，自动提交第 6 个订单",
+          "conditions": [
+            {
+              "binding": "maxOrder",
+              "operator": "GTE",
+              "value": "6"
+            },
+            {
+              "path": "angel.Order[5].status",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "binding": "order6Want1Count",
+              "operator": "GT",
+              "value": "0"
+            },
+            {
+              "binding": "order6Want2Count",
+              "operator": "GT",
+              "value": "0"
+            }
+          ],
+          "requests": [
+            {
+              "name": "提交订单6",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "value": "6"
+                }
+              ],
+              "failureMessage": "提交第 6 个订单失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "提交订单7",
+          "message": "材料满足，自动提交第 7 个订单",
+          "conditions": [
+            {
+              "binding": "maxOrder",
+              "operator": "GTE",
+              "value": "7"
+            },
+            {
+              "path": "angel.Order[6].status",
+              "operator": "EQ",
+              "value": "0"
+            },
+            {
+              "binding": "order7Want1Count",
+              "operator": "GT",
+              "value": "0"
+            },
+            {
+              "binding": "order7Want2Count",
+              "operator": "GT",
+              "value": "0"
+            }
+          ],
+          "requests": [
+            {
+              "name": "提交订单7",
+              "cmd": 2,
+              "params": [
+                {
+                  "key": "index",
+                  "value": "7"
+                }
+              ],
+              "failureMessage": "提交第 7 个订单失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "处理擂台挑战",
+          "message": "擂台挑战可进行，自动开始战斗",
+          "conditions": [
+            {
+              "path": "angel.Mission[0].time",
+              "operator": "LT",
+              "value": "2"
+            },
+            {
+              "path": "angel.Mission[0].times",
+              "operator": "LTE",
+              "value": "0"
+            }
+          ],
+          "combat": {
+            "npcIdBinding": "arenaNpcId",
+            "npcNameBinding": "arenaNpcName"
+          },
+          "afterCombatRequests": [
+            {
+              "name": "提交擂台挑战结果",
+              "cmd": 1,
+              "params": [
+                {
+                  "key": "index",
+                  "value": "1"
+                },
+                {
+                  "key": "func",
+                  "value": "1"
+                }
+              ],
+              "failureMessage": "提交擂台挑战结果失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ]
+        },
+        {
+          "name": "处理寻宝小队",
+          "message": "寻宝小队可进行，自动检查背包前 6 只精灵",
+          "conditions": [
+            {
+              "path": "angel.Mission[1].time",
+              "operator": "LT",
+              "value": "2"
+            },
+            {
+              "path": "angel.Mission[1].times",
+              "operator": "LTE",
+              "value": "0"
+            }
+          ],
+          "requests": [
+            {
+              "name": "查询背包前6只精灵",
+              "cmd": 6,
+              "failureMessage": "查询背包精灵失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true,
+              "branches": [
+                {
+                  "name": "寻宝小队可派遣",
+                  "message": "找到符合属性条件的 3 只精灵，自动派遣寻宝小队",
+                  "conditions": [
+                    {
+                      "binding": "treasureSpirit1Pos",
+                      "operator": "EXISTS",
+                      "value": ""
+                    },
+                    {
+                      "binding": "treasureSpirit2Pos",
+                      "operator": "EXISTS",
+                      "value": ""
+                    },
+                    {
+                      "binding": "treasureSpirit3Pos",
+                      "operator": "EXISTS",
+                      "value": ""
+                    }
+                  ],
+                  "requests": [
+                    {
+                      "name": "派遣寻宝小队",
+                      "cmd": 1,
+                      "params": [
+                        {
+                          "key": "index",
+                          "value": "2"
+                        },
+                        {
+                          "key": "func",
+                          "value": "1"
+                        },
+                        {
+                          "key": "n1",
+                          "binding": "treasureSpirit1Pos"
+                        },
+                        {
+                          "key": "n2",
+                          "binding": "treasureSpirit2Pos"
+                        },
+                        {
+                          "key": "n3",
+                          "binding": "treasureSpirit3Pos"
+                        }
+                      ],
+                      "failureMessage": "派遣寻宝小队失败，结束当前活动",
+                      "stopCurrentActivityOnFailure": true
+                    }
+                  ],
+                  "requeryAfterRequests": true
+                },
+                {
+                  "name": "寻宝小队精灵不足",
+                  "message": "当前背包前 6 只精灵里，没有满足寻宝小队要求的 3 只精灵，请先切换背包精灵",
+                  "stopCurrentActivity": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "处理行商到来",
+          "message": "行商到来可进行，自动尝试交换礼品",
+          "conditions": [
+            {
+              "path": "angel.Mission[2].time",
+              "operator": "LT",
+              "value": "2"
+            },
+            {
+              "path": "angel.Mission[2].times",
+              "operator": "LTE",
+              "value": "0"
+            }
+          ],
+          "requests": [
+            {
+              "name": "执行行商到来",
+              "cmd": 1,
+              "params": [
+                {
+                  "key": "index",
+                  "value": "3"
+                },
+                {
+                  "key": "func",
+                  "value": "1"
+                }
+              ],
+              "failureMessage": "行商到来所需道具不足或条件不满足，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "处理盛宴使者",
+          "message": "盛宴使者可进行，自动派遣本轮使者",
+          "scene": {
+            "sceneIdBinding": "messengerSceneId",
+            "message": "盛宴使者需要切换场景，准备自动前往任务地点"
+          },
+          "conditions": [
+            {
+              "path": "angel.Mission[3].time",
+              "operator": "LT",
+              "value": "2"
+            },
+            {
+              "path": "angel.Mission[3].times",
+              "operator": "LTE",
+              "value": "0"
+            }
+          ],
+          "requests": [
+            {
+              "name": "刷新盛宴使者场景状态",
+              "cmd": 0,
+              "failureMessage": "刷新盛宴使者场景状态失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            },
+            {
+              "name": "执行盛宴使者",
+              "cmd": 1,
+              "params": [
+                {
+                  "key": "index",
+                  "value": "4"
+                },
+                {
+                  "key": "func",
+                  "value": "1"
+                }
+              ],
+              "failureMessage": "盛宴使者执行失败，结束当前活动",
+              "stopCurrentActivityOnFailure": true
+            }
+          ],
+          "requeryAfterRequests": true
+        },
+        {
+          "name": "任务冷却中",
+          "message": "当前有任务处于冷却中，等待倒计时结束后继续",
+          "match": "ANY",
+          "conditions": [
+            {
+              "path": "angel.Mission[0].times",
+              "operator": "GT",
+              "value": "0"
+            },
+            {
+              "path": "angel.Mission[1].times",
+              "operator": "GT",
+              "value": "0"
+            },
+            {
+              "path": "angel.Mission[2].times",
+              "operator": "GT",
+              "value": "0"
+            },
+            {
+              "path": "angel.Mission[3].times",
+              "operator": "GT",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "name": "当前无法继续",
+          "message": "当前没有可自动处理的订单或任务，可能缺少材料或需要手动调整精灵",
+          "stopCurrentActivity": true
+        }
+      ]
+    },
+    "completeRules": [
+      {
+        "message": "盛宴筹备今日订单已全部完成",
+        "conditions": [
+          {
+            "path": "angel.vip",
+            "operator": "EQ",
+            "value": "0"
+          },
+          {
+            "path": "angel.Order[0].status",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.Order[1].status",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.Order[2].status",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.Order[3].status",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.Order[4].status",
+            "operator": "EQ",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "message": "盛宴筹备今日订单已全部完成",
+        "conditions": [
+          {
+            "path": "angel.vip",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.Order[0].status",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.Order[1].status",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.Order[2].status",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.Order[3].status",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.Order[4].status",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.Order[5].status",
+            "operator": "EQ",
+            "value": "1"
+          },
+          {
+            "path": "angel.Order[6].status",
+            "operator": "EQ",
+            "value": "1"
+          }
+        ]
+      }
+    ]
+  }
+}
