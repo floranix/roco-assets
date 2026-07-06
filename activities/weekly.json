@@ -3,10 +3,16 @@
   "message": "ok",
   "timestamp": 0,
   "data": {
-    "total": 3,
+    "total": 4,
     "page": 1,
     "num": 100,
     "list": [
+      {
+        "id": 3983,
+        "name": "盛宴筹备",
+        "path": "https://raw.githubusercontent.com/floranix/roco-assets/refs/heads/main/activities/weekly_sources/3983_feast_preparation.json",
+        "expired": false
+      },
       {
         "id": 4212,
         "name": "启幕童话镇",
